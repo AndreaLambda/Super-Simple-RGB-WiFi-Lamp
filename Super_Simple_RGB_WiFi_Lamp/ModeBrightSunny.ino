@@ -5,7 +5,7 @@ private:
     // Config
     int sunnySpeed        =  10;
     int sunnyBrightExtend =   0;
-    int sunnyBrightBri    = 100;
+    int sunnyBrightBri    = 128;
     int sunnyBrightSat    = 255;
     int sunnyNormalBri    = 100;
     int sunnyNormalSat    = 255;
@@ -22,9 +22,9 @@ private:
         // Constrain the variables before using
         sunnySpeed = constrain(sunnySpeed, 0, 255);
         sunnyBrightExtend = constrain(sunnyBrightExtend, 0, NUM_LEDS);
-        sunnyBrightBri = constrain(sunnyBrightBri, 0, 100);
+        sunnyBrightBri = constrain(sunnyBrightBri, 0, 255);
         sunnyBrightSat = constrain(sunnyBrightSat, 0, 255);
-        sunnyNormalBri = constrain(sunnyNormalBri, 0, 100);
+        sunnyNormalBri = constrain(sunnyNormalBri, 0, 255);
         sunnyNormalSat = constrain(sunnyNormalSat, 0, 255);
 
         if (sunnyNormalBri > sunnyBrightBri) {
