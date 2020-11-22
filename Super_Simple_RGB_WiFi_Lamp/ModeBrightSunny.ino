@@ -30,7 +30,7 @@ private:
         if (sunnyNormalBri > sunnyBrightBri) {
           int temp = sunnyNormalBri;
           sunnyNormalBri = sunnyBrightBri;
-          sunnyBrightBri = sunnyNormalBri;
+          sunnyBrightBri = temp;
         }
 
         normalStart = sunnyBrightExtend;
@@ -38,7 +38,7 @@ private:
 
         // TODO: confirm assumption that using Value 255 and setting overall FastLED brightness is more energy-efficient?
         FastLED.setBrightness(sunnyBrightBri);
-        normalBriRatio = sunnyNormalBri * 255 / sunnyBrightBri;
+        normalBriRatio = (sunnyBrightBri > 0 ? (sunnyNormalBri * 255 / sunnyBrightBri) : 0);
     }
 
 public:
