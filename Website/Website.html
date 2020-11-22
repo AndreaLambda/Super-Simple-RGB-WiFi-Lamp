@@ -66,6 +66,10 @@
                 // console.log("Found Rainbow Message")
                 handleRainbowMessage(jsonMessage.Rainbow)
             }
+            if ("BrightSunny" in jsonMessage) {
+                // console.log("Found Rainbow Message")
+                handleBrightSunnyMessage(jsonMessage.BrightSunny)
+            }
             if ("Clock" in jsonMessage) {
                 // console.log("Found Clock Message")
                 handleClockMessage(jsonMessage.Clock)
@@ -197,9 +201,56 @@
                         $("#rainbowBrightnessLabel").html(Math.round(jsonMessage.Brightness / 255 * 100))
                     }
                 }
+                if (("Saturation" in jsonMessage)) {
+                    if (typeof jsonMessage.Saturation === "number") {
+                        $("#rainbowSaturation").val(Math.round(jsonMessage.Saturation / 255 * 100))
+                        $("#rainbowSaturationLabel").html(Math.round(jsonMessage.Saturation / 255 * 100))
+                    }
+                }
             }
         }
 
+        function handleBrightSunnyMessage(jsonMessage) {
+            if (typeof jsonMessage === "object") {
+                if (("Speed" in jsonMessage)) {
+                    if (typeof jsonMessage.Speed === "number") {
+                        $("#sunnySpeed").val(jsonMessage.Speed)
+                        $("#sunnySpeedLabel").html(jsonMessage.Speed)
+                    }
+                }
+                if (("BrightExtend" in jsonMessage)) {
+                    if (typeof jsonMessage.BrightExtend === "number") {
+                        $("#sunnyBrightExtend").val(jsonMessage.BrightExtend)
+                        $("#sunnyBrightExtendLabel").html(jsonMessage.BrightExtend)
+                    }
+                }                
+                if (("BrightBrightness" in jsonMessage)) {
+                    if (typeof jsonMessage.BrightBrightness === "number") {
+                        $("#sunnyBrightBrightness").val(Math.round(jsonMessage.BrightBrightness / 255 * 100))
+                        $("#sunnyBrightBrightnessLabel").html(Math.round(jsonMessage.BrightBrightness / 255 * 100))
+                    }
+                }
+                if (("BrightSaturation" in jsonMessage)) {
+                    if (typeof jsonMessage.BrightSaturation === "number") {
+                        $("#sunnyBrightSaturation").val(Math.round(jsonMessage.BrightSaturation / 255 * 100))
+                        $("#sunnyBrightSaturationLabel").html(Math.round(jsonMessage.BrightSaturation / 255 * 100))
+                    }
+                }
+                if (("NormalBrightness" in jsonMessage)) {
+                    if (typeof jsonMessage.NormalBrightness === "number") {
+                        $("#sunnyNormalBrightness").val(Math.round(jsonMessage.NormalBrightness / 255 * 100))
+                        $("#sunnyNormalBrightnessLabel").html(Math.round(jsonMessage.NormalBrightness / 255 * 100))
+                    }
+                }
+                if (("NormalSaturation" in jsonMessage)) {
+                    if (typeof jsonMessage.NormalSaturation === "number") {
+                        $("#sunnyNormalSaturation").val(Math.round(jsonMessage.NormalSaturation / 255 * 100))
+                        $("#sunnyNormalSaturationLabel").html(Math.round(jsonMessage.NormalSaturation / 255 * 100))
+                    }
+                }                
+            }
+        }
+        
         function handleClockMessage(jsonMessage) {
             if (typeof jsonMessage === "object") {
                 if (("hourColour" in jsonMessage)) {
@@ -573,6 +624,9 @@
                     <li id="rainbowTabNavItem" class="nav-item">
                         <a class="nav-link" data-toggle="tab" href="#Rainbow">Rainbow</a>
                     </li>
+                    <li id="brightSunnyTabNavItem" class="nav-item">
+                        <a class="nav-link" data-toggle="tab" href="#BrightSunny">BrightSunny</a>
+                    </li>                    
                     <li id="clockTabNavItem" class="nav-item">
                         <a class="nav-link" data-toggle="tab" href="#Clock">Clock</a>
                     </li>
@@ -616,6 +670,9 @@
                     });
                     $("#rainbowTabNavItem").click(function () {
                         sendMessage({ "Mode": "Rainbow" })
+                    });
+                    $("#brightSunnyTabNavItem").click(function () {
+                        sendMessage({ "Mode": "BrightSunny" })
                     });
                     $("#clockTabNavItem").click(function () {
                         sendMessage({ "Mode": "Clock" })
@@ -724,6 +781,7 @@
                 below. Click any of the buttons to interact with the light.</p>
             <button id="colourButton" type="submit" class="col mb-2 mx-2 btn btn-lg btn-outline-light">Colour</button>
             <button id="rainbowButton" type="submit" class="col mb-2 mx-2 btn btn-lg btn-outline-light">Rainbow</button>
+            <button id="brightSunnyButton" type="submit" class="col mb-2 mx-2 btn btn-lg btn-outline-light">BrightSunny</button>
             <button id="clockButton" type="submit" class="col mb-2 mx-2 btn btn-lg btn-outline-light">Clock</button>
             <button id="bellCurveButton" type="submit" class="col mb-2 mx-2 btn btn-lg btn-outline-light">Bell Curve</button>
             <button id="circleButton" type="submit" class="col mb-2 mx-2 btn btn-lg btn-outline-light">Circle</button>
@@ -748,6 +806,10 @@
                     $('#navbarHeader a[href="#Rainbow"]').tab('show')
                     sendMessage({ "Mode": "Rainbow" })
                 });
+                $("#brightSunnyButton").click(function () {
+                    $('#navbarHeader a[href="#BrightSunny"]').tab('show')
+                    sendMessage({ "Mode": "BrightSunny" })
+                });                
                 $("#clockButton").click(function () {
                     $('#navbarHeader a[href="#Clock"]').tab('show')
                     sendMessage({ "Mode": "Clock" })
@@ -823,7 +885,7 @@
                 var currentRed = 0;
                 var currentGreen = 0;
                 var currentBlue = 0;
-                var colourDebunce = Date.now()
+                var colourDebounce = Date.now()
 
                 var colourSelectButton = $('#colourSelectButton').colorPicker({
                     customBG: '#222',
@@ -894,8 +956,8 @@
                                 "Blue": blue
                             }
                         }
-                        if (Date.now() - colourDebunce > 50) {
-                            colourDebunce = Date.now()
+                        if (Date.now() - colourDebounce > 50) {
+                            colourDebounce = Date.now()
                             sendMessage(msg)
                         }
                     }
@@ -916,41 +978,53 @@
                 <input id="rainbowBrightness" type="range" min="0" max="100" step="1" value="100" class="form-control-range custom-range">
             </div>
             <div>
+                <label for="rainbowSaturation">Rainbow Saturation: <span id="rainbowSaturationLabel">100</span>%</label>
+                <input id="rainbowSaturation" type="range" min="0" max="100" step="1" value="100" class="form-control-range custom-range">
+            </div>
+            <div>
                 <label for="rainbowSpeed">Rainbow Speed: <span id="rainbowSpeedLabel">10</span> seconds</label>
-                <input id="rainbowSpeed" type="range" min="0" max="10" step="1" value="10" class="form-control-range custom-range">
+                <input id="rainbowSpeed" type="range" min="0" max="60" step="1" value="10" class="form-control-range custom-range">
             </div>
             <script>
-                var rainbowDebunce = Date.now()
+                var rainbowDebounce = Date.now()
                 var rainbowLastMessage = ""
 
                 $("#rainbowHue").on("input", function () {
-                    onRainboWHueEvent()
+                    onRainbowHueEvent()
                 });
                 $("#rainbowHue").on("change", function () {
-                    onRainboWHueEvent()
+                    onRainbowHueEvent()
                 });
                 $("#rainbowSpeed").on("input", function () {
-                    onRainboWEvent()
+                    onRainbowEvent()
                 });
                 $("#rainbowSpeed").on("change", function () {
-                    onRainboWEvent()
+                    onRainbowEvent()
                 });
                 $("#rainbowBrightness").on("input", function () {
-                    onRainboWEvent()
+                    onRainbowEvent()
                 });
                 $("#rainbowBrightness").on("change", function () {
-                    onRainboWEvent()
+                    onRainbowEvent()
+                });
+                $("#rainbowSaturation").on("input", function () {
+                    onRainbowEvent()
+                });
+                $("#rainbowSaturation").on("change", function () {
+                    onRainbowEvent()
                 });
 
-                function onRainboWHueEvent() {
+                function onRainbowHueEvent() {
 
                     let currentHueValue = parseInt($("#rainbowHue").val(), 10)
                     let currentBrightnessValue = parseInt($("#rainbowBrightness").val(), 10)
+                    let currentSaturationValue = parseInt($("#rainbowSaturation").val(), 10)
 
                     $("#rainbowSpeed").val = 0;
                     $("#rainbowSpeedLabel").html(0)
                     $("#rainbowHueLabel").html(currentHueValue)
                     $("#rainbowBrightnessLabel").html(currentBrightnessValue)
+                    $("#rainbowSaturationLabel").html(currentSaturationValue)
 
                     msg = {
                         "State": true,
@@ -958,41 +1032,158 @@
                         "Rainbow": {
                             "Hue": Math.round(currentHueValue / 360 * 255),
                             "Speed": 0,
-                            "Brightness": Math.round(currentBrightnessValue / 100 * 255)
+                            "Brightness": Math.round(currentBrightnessValue / 100 * 255),
+                            "Saturation": Math.round(currentSaturationValue / 100 * 255)
                         }
                     }
 
-                    if (msg != rainbowLastMessage && Date.now() - rainbowDebunce > 50) {
-                        rainbowDebunce = Date.now()
+                    if (msg != rainbowLastMessage && Date.now() - rainbowDebounce > 50) {
+                        rainbowDebounce = Date.now()
                         rainbowLastMessage = msg
                         sendMessage(msg)
                     }
                 }
 
-                function onRainboWEvent() {
+                function onRainbowEvent() {
                     let currentSpeedValue = parseFloat($("#rainbowSpeed").val())
                     let currentBrightnessValue = parseInt($("#rainbowBrightness").val(), 10)
+                    let currentSaturationValue = parseInt($("#rainbowSaturation").val(), 10)
 
                     $("#rainbowSpeedLabel").html(currentSpeedValue)
                     $("#rainbowBrightnessLabel").html(currentBrightnessValue)
+                    $("#rainbowSaturationLabel").html(currentSaturationValue)
 
                     msg = {
                         "State": true,
                         "Mode": "Rainbow",
                         "Rainbow": {
                             "Speed": currentSpeedValue,
-                            "Brightness": Math.round(currentBrightnessValue / 100 * 255)
+                            "Brightness": Math.round(currentBrightnessValue / 100 * 255),
+                            "Saturation": Math.round(currentSaturationValue / 100 * 255)
                         }
                     }
 
-                    if (msg != rainbowLastMessage && Date.now() - rainbowDebunce > 50) {
-                        rainbowDebunce = Date.now()
+                    if (msg != rainbowLastMessage && Date.now() - rainbowDebounce > 50) {
+                        rainbowDebounce = Date.now()
                         rainbowLastMessage = msg
                         sendMessage(msg)
                     }
                 }
             </script>
         </div>
+
+        <div id="BrightSunny" class="container pb-5 tab-pane fade">
+            <h2>BrightSunny Mode</h2>
+            <p>Here you can set the mode to brightSunny. This mode produces a brightSunny all the way around the light and
+                slowly shifts the colours clockwise. On this page you can set the speed of this as well as the
+                brightness of the light</p>
+            <div>
+                <label for="sunnySpeed">Speed: <span id="sunnySpeedLabel">10</span> seconds</label>
+                <input id="sunnySpeed" type="range" min="0" max="60" step="1" value="10" class="form-control-range custom-range">
+            </div>
+
+            <div>
+                <label for="sunnyBrightExtend">Extend Bright Section by: <span id="sunnyBrightExtendLabel">0</span> lights</label>
+                <input id="sunnyBrightExtend" type="range" min="0" max="56" step="1" value="0" class="form-control-range custom-range">
+            </div>
+
+            <div>
+                <label for="sunnyBrightBrightness">Bright Section Brightness: <span id="sunnyBrightBrightnessLabel">100</span>%</label>
+                <input id="sunnyBrightBrightness" type="range" min="0" max="100" step="1" value="100" class="form-control-range custom-range">
+            </div>
+            <div>
+                <label for="sunnyBrightSaturation">Bright Section Saturation: <span id="sunnyBrightSaturationLabel">100</span>%</label>
+                <input id="sunnyBrightSaturation" type="range" min="0" max="100" step="1" value="100" class="form-control-range custom-range">
+            </div>
+
+            <div>
+                <label for="sunnyNormalBrightness">Normal Section Brightness: <span id="sunnyNormalBrightnessLabel">100</span>%</label>
+                <input id="sunnyNormalBrightness" type="range" min="0" max="100" step="1" value="100" class="form-control-range custom-range">
+            </div>
+            <div>
+                <label for="sunnyNormalSaturation">Normal Section Saturation: <span id="sunnyNormalSaturationLabel">100</span>%</label>
+                <input id="sunnyNormalSaturation" type="range" min="0" max="100" step="1" value="100" class="form-control-range custom-range">
+            </div>
+
+
+            <script>
+                var brightSunnyDebounce = Date.now()
+                var brightSunnyLastMessage = ""
+
+                $("#sunnySpeed").on("input", function () {
+                    onBrightSunnyEvent()
+                });
+                $("#sunnySpeed").on("change", function () {
+                    onBrightSunnyEvent()
+                });
+                $("#sunnyBrightExtend").on("input", function () {
+                    onBrightSunnyEvent()
+                });
+                $("#sunnyBrightExtend").on("change", function () {
+                    onBrightSunnyEvent()
+                });                
+                $("#sunnyBrightBrightness").on("input", function () {
+                    onBrightSunnyEvent()
+                });
+                $("#sunnyBrightBrightness").on("change", function () {
+                    onBrightSunnyEvent()
+                });
+                $("#sunnyBrightSaturation").on("input", function () {
+                    onBrightSunnyEvent()
+                });
+                $("#sunnyBrightSaturation").on("change", function () {
+                    onBrightSunnyEvent()
+                });
+                $("#sunnyNormalBrightness").on("input", function () {
+                    onBrightSunnyEvent()
+                });
+                $("#sunnyNormalBrightness").on("change", function () {
+                    onBrightSunnyEvent()
+                });
+                $("#sunnyNormalSaturation").on("input", function () {
+                    onBrightSunnyEvent()
+                });
+                $("#sunnyNormalSaturation").on("change", function () {
+                    onBrightSunnyEvent()
+                });
+
+                function onBrightSunnyEvent() {
+                    let currentSpeedValue = parseFloat($("#sunnySpeed").val())
+                    let currentBrightExtendValue = parseFloat($("#sunnyBrightExtend").val())
+                    let currentBrightBrightnessValue = parseInt($("#sunnyBrightBrightness").val(), 10)
+                    let currentBrightSaturationValue = parseInt($("#sunnyBrightSaturation").val(), 10)
+                    let currentNormalBrightnessValue = parseInt($("#sunnyNormalBrightness").val(), 10)
+                    let currentNormalSaturationValue = parseInt($("#sunnyNormalSaturation").val(), 10)
+
+                    $("#sunnySpeedLabel").html(currentSpeedValue)
+                    $("#sunnyBrightExtendLabel").html(currentBrightExtendValue)
+                    $("#sunnyBrightBrightnessLabel").html(currentBrightBrightnessValue)
+                    $("#sunnyBrightSaturationLabel").html(currentBrightSaturationValue)
+                    $("#sunnyNormalBrightnessLabel").html(currentNormalBrightnessValue)
+                    $("#sunnyNormalSaturationLabel").html(currentNormalSaturationValue)
+
+                    msg = {
+                        "State": true,
+                        "Mode": "BrightSunny",
+                        "BrightSunny": {
+                            "Speed": currentSpeedValue,
+                            "BrightExtend": currentBrightExtendValue,
+                            "BrightBrightness": Math.round(currentBrightBrightnessValue / 100 * 255),
+                            "BrightSaturation": Math.round(currentBrightSaturationValue / 100 * 255),
+                            "NormalBrightness": Math.round(currentNormalBrightnessValue / 100 * 255),
+                            "NormalSaturation": Math.round(currentNormalSaturationValue / 100 * 255)
+                        }
+                    }
+
+                    if (msg != brightSunnyLastMessage && Date.now() - brightSunnyDebounce > 50) {
+                        brightSunnyDebounce = Date.now()
+                        brightSunnyLastMessage = msg
+                        sendMessage(msg)
+                    }
+                }
+            </script>
+        </div>
+
         <div id="Clock" class="container pb-5 tab-pane fade">
             <h2>Clock Mode</h2>
             <p>In this mode the light will display the current time in 12 hr format uisng the
@@ -1009,8 +1200,8 @@
             </div>
 
             <script>
-                clockHourDebunce = Date.now()
-                clockMinDebunce = Date.now()
+                clockHourDebounce = Date.now()
+                clockMinDebounce = Date.now()
                 var currentHourRed = 0
                 var currentHourGreen = 0
                 var currentHourBlue = 0
@@ -1107,8 +1298,8 @@
                             }
                         }
 
-                        if (Date.now() - clockHourDebunce > 50) {
-                            clockHourDebunce = Date.now()
+                        if (Date.now() - clockHourDebounce > 50) {
+                            clockHourDebounce = Date.now()
                             sendMessage(msg)
                         }
                     }
@@ -1132,8 +1323,8 @@
                             }
                         }
 
-                        if (Date.now() - clockMinDebunce > 50) {
-                            clockMinDebunce = Date.now()
+                        if (Date.now() - clockMinDebounce > 50) {
+                            clockMinDebounce = Date.now()
                             sendMessage(msg)
                         }
                     }
@@ -1149,7 +1340,7 @@
                 <input id="bellCurveSelectButton" class="color col mb-2 mx-2 btn btn-lg btn-outline-light" value="rgb(0,0,0)">
             </div>
             <script>
-                bellCurveDebunce = Date.now()
+                bellCurveDebounce = Date.now()
                 var bellRed = 0
                 var bellGreen = 0
                 var bellBlue = 0
@@ -1194,8 +1385,8 @@
                             }
                         }
 
-                        if (Date.now() - bellCurveDebunce > 50) {
-                            bellCurveDebunce = Date.now()
+                        if (Date.now() - bellCurveDebounce > 50) {
+                            bellCurveDebounce = Date.now()
                             sendMessage(msg)
                         }
                     }
@@ -1237,7 +1428,7 @@
                 var sparkleRed = 0;
                 var sparkleGreen = 0;
                 var sparkleBlue = 0;
-                var sparkleDebunce = Date.now()
+                var sparkleDebounce = Date.now()
 
                 var sparkleSelectButton = $('#sparkleSelectButton').colorPicker({
                     customBG: '#222',
@@ -1279,8 +1470,8 @@
                         }
                     }
 
-                    if (msg != sparkleLastMessage && Date.now() - sparkleDebunce > 50) {
-                        sparkleDebunce = Date.now()
+                    if (msg != sparkleLastMessage && Date.now() - sparkleDebounce > 50) {
+                        sparkleDebounce = Date.now()
                         sparkleLastMessage = msg
                         sendMessage(msg)
                     }
@@ -1301,13 +1492,13 @@
                                 "Blue": blue
                             }
                         }
-                        if (Date.now() - sparkleDebunce > 50) {
-                            sparkleDebunce = Date.now()
+                        if (Date.now() - sparkleDebounce > 50) {
+                            sparkleDebounce = Date.now()
                             sendMessage(msg)
                         }
                     }
-                    if (msg != sparkleLastMessage && Date.now() - sparkleDebunce > 50) {
-                        sparkleDebunce = Date.now()
+                    if (msg != sparkleLastMessage && Date.now() - sparkleDebounce > 50) {
+                        sparkleDebounce = Date.now()
                         sparkleLastMessage = msg
                         sendMessage(msg)
                     }
@@ -1326,7 +1517,7 @@
                 var colorWipeRed = 0
                 var colorWipeGreen = 0
                 var colorWipeBlue = 0
-                var colorWipeDebunce = Date.now()
+                var colorWipeDebounce = Date.now()
 
                 var colorWipeSelectButton = $('#colorWipeSelectButton').colorPicker({
                     customBG: '#222',
@@ -1373,12 +1564,12 @@
                             }
                         }
 
-                        if (Date.now() - colorWipeDebunce > 50) {
-                            colorWipeDebunce = Date.now()
+                        if (Date.now() - colorWipeDebounce > 50) {
+                            colorWipeDebounce = Date.now()
                             sendMessage(msg)
                         }
-                        if (msg != colorWipeLastMessage && Date.now() - colorWipeDebunce > 50) {
-                            colorWipeDebunce = Date.now()
+                        if (msg != colorWipeLastMessage && Date.now() - colorWipeDebounce > 50) {
+                            colorWipeDebounce = Date.now()
                             colorWipeLastMessage = msg
                             sendMessage(msg)
                         }
@@ -1403,7 +1594,7 @@
                 var confettiGreen = 0;
                 var confettiBlue = 0;
                 var confettiSpeed = 30;
-                var confettiDebunce = Date.now()
+                var confettiDebounce = Date.now()
 
                 var confettiSelectButton = $('#confettiSelectButton').colorPicker({
                     customBG: '#222',
@@ -1452,8 +1643,8 @@
                         }
                     }
 
-                    if (msg != confettiLastMessage && Date.now() - confettiDebunce > 50) {
-                        confettiDebunce = Date.now()
+                    if (msg != confettiLastMessage && Date.now() - confettiDebounce > 50) {
+                        confettiDebounce = Date.now()
                         confettiLastMessage = msg
                         sendMessage(msg)
                     }
@@ -1474,13 +1665,13 @@
                                 "Blue": blue
                             }
                         }
-                        if (Date.now() - confettiDebunce > 50) {
-                            confettiDebunce = Date.now()
+                        if (Date.now() - confettiDebounce > 50) {
+                            confettiDebounce = Date.now()
                             sendMessage(msg)
                         }
                     }
-                    if (msg != confettiLastMessage && Date.now() - confettiDebunce > 50) {
-                        confettiDebunce = Date.now()
+                    if (msg != confettiLastMessage && Date.now() - confettiDebounce > 50) {
+                        confettiDebounce = Date.now()
                         confettiLastMessage = msg
                         sendMessage(msg)
                     }
@@ -1519,7 +1710,7 @@
                 <input id="firefliesFlashLength" type="range" min="50" max="15000" step="50" value="500" class="form-control-range custom-range">
             </div>
             <script>
-                var firefliesDebunce = Date.now()
+                var firefliesDebounce = Date.now()
 
                 $("#firefliesHue").on("input", function () {
                     onfirefliesEvent()
@@ -1576,8 +1767,8 @@
                         }
                     }
 
-                    if (Date.now() - firefliesDebunce > 50) {
-                        firefliesDebunce = Date.now()
+                    if (Date.now() - firefliesDebounce > 50) {
+                        firefliesDebounce = Date.now()
                         sendMessage(msg)
                     }
                 }
@@ -1595,7 +1786,7 @@
                 <input id="saturationFadeSpeed" type="range" min="0" max="10" step="1" value="10" class="form-control-range custom-range">
             </div>
             <script>
-                var saturationFadeDebunce = Date.now()
+                var saturationFadeDebounce = Date.now()
 
                 $("#saturationFadeHue").on("input", function () {
                     onSaturationFadeEvent()
@@ -1625,8 +1816,8 @@
                         }
                     }
 
-                    if (Date.now() - saturationFadeDebunce > 50) {
-                        saturationFadeDebunce = Date.now()
+                    if (Date.now() - saturationFadeDebounce > 50) {
+                        saturationFadeDebounce = Date.now()
                         sendMessage(msg)
                     }
                 }
@@ -1679,7 +1870,7 @@
             </ul>
 
             <script>
-                var visualiserDebunce = Date.now()
+                var visualiserDebounce = Date.now()
                 var lastVisualiserMessaeg = ""
 
                 $("#visualiserPeriod").on("input", function () {
@@ -1747,9 +1938,9 @@
                         }
                     }
 
-                    if (msg != lastVisualiserMessaeg && Date.now() - visualiserDebunce > 50) {
+                    if (msg != lastVisualiserMessaeg && Date.now() - visualiserDebounce > 50) {
                         lastVisualiserMessaeg = msg
-                        visualiserDebunce = Date.now()
+                        visualiserDebounce = Date.now()
                         sendMessage(msg)
                     }
                 }

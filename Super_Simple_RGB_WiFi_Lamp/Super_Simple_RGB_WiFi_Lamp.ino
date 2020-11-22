@@ -24,21 +24,23 @@
 // All variables at the top of this sketch need to be defined correctly for your light. Read the comments around each one for more details on 
 // what each of them are.
 
-#define DEFAULT_NAME "Super Simple RGB Wifi Lamp"
+#define DEFAULT_NAME "Moonside"
 
 // Set Your Data pin - This is the pin on your ESP8266 that is connected to the LED's. Remember to add the letter "D" infront of the number 
 // to map the pin correctly for your platform.
 #define DATA_PIN D1
 
 // Set the number of LED's - Simply count how many there are on your string and enter the number here.
-#define NUM_LEDS 66
+#define NUM_LEDS 260
+// Number of lights per wall, in the order of {couch, closet, bed, computer}
+const int LIGHTS_PER_WALL[] = {55, 74, 56, 75};
 
 // Set your UTC offset - This is the time zone you are in. for example +10 for Sydney or -4 for NYC.
 #define UTC_OFFSET +10
 
 // Set the chipset and color order for the LEDs you are using. For more info on supported hardware see: https://github.com/FastLED/FastLED/wiki/Overview#supported-chipsets.
 #define CHIPSET WS2812B
-#define COLOR_ORDER GRB
+#define COLOR_ORDER RGB
 
 // Limit the maximum frame rate to prevent flickering. Values around 400 or
 // above cause flickering LEDs because of the WS2821 update frequency.
@@ -52,7 +54,7 @@ int bottomLeds[]  = {14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, 65, 64, 6
 int leftLeds[]    = {48, 49, 50};
 int rightLeds[]   = {15, 16, 17};
 
-// Eneter your wifi credentials here - If you would like to enter your wifi credentials now you can with these variables. This is a nice easy 
+// Enter your wifi credentials here - If you would like to enter your wifi credentials now you can with these variables. This is a nice easy 
 // method to get your ESP8266 connected to your network quickly. If you don't you can always set it up later in the wifi portal.
 String SSID = "";
 String Password = "";

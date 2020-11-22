@@ -7,7 +7,8 @@ void ledModeInit()
 {
   // All modes need to register an instance here
   modes["Colour"] = new ModeColour();
-  modes["Rainbow"] = new ModeRainbow();
+  modes["Rainbow"] = new ModePastelRainbow();
+  modes["BrightSunny"] = new ModeBrightSunny();
   modes["Clock"] = new ModeClock();
   modes["Bell Curve"] = new ModeBellCurve();
   modes["Night Rider"] = new ModeNightRider();
