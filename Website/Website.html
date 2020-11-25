@@ -1107,78 +1107,53 @@
 
 
             <script>
-                var brightSunnyDebounce = Date.now()
-                var brightSunnyLastMessage = ""
+                let brightSunnyDebounce = Date.now()
+                let brightSunnyLastMessage = ""
 
-                $("#sunnySpeed").on("input", function () {
-                    onBrightSunnyEvent()
-                });
-                $("#sunnySpeed").on("change", function () {
-                    onBrightSunnyEvent()
-                });
-                $("#sunnyBrightExtend").on("input", function () {
-                    onBrightSunnyEvent()
-                });
-                $("#sunnyBrightExtend").on("change", function () {
-                    onBrightSunnyEvent()
-                });                
-                $("#sunnyBrightBrightness").on("input", function () {
-                    onBrightSunnyEvent()
-                });
-                $("#sunnyBrightBrightness").on("change", function () {
-                    onBrightSunnyEvent()
-                });
-                $("#sunnyBrightSaturation").on("input", function () {
-                    onBrightSunnyEvent()
-                });
-                $("#sunnyBrightSaturation").on("change", function () {
-                    onBrightSunnyEvent()
-                });
-                $("#sunnyNormalBrightness").on("input", function () {
-                    onBrightSunnyEvent()
-                });
-                $("#sunnyNormalBrightness").on("change", function () {
-                    onBrightSunnyEvent()
-                });
-                $("#sunnyNormalSaturation").on("input", function () {
-                    onBrightSunnyEvent()
-                });
-                $("#sunnyNormalSaturation").on("change", function () {
-                    onBrightSunnyEvent()
-                });
+                function addSliderEvents(id) {
+                    $(id).on("input", function () {
+                        onBrightSunnyEvent();
+                    });
+                    $(id).on("change", function () {
+                        onBrightSunnyEvent();
+                    });
+                }
+
+                addSliderEvents("#sunnySpeed");
+                addSliderEvents("#sunnyBrightExtend");
+                addSliderEvents("#sunnyBrightBrightness");
+                addSliderEvents("#sunnyBrightSaturation");
+                addSliderEvents("#sunnyNormalBrightness");
+                addSliderEvents("#sunnyNormalSaturation");
+
+                const PASSTHROUGH = (value) => value;
+                const pctToUint = (value) => Math.round(value / 100 * 255);
+
+                function parseAndUpdateLabel(id, parseFn, valueFn = PASSTHROUGH, defaultValue = 0) {
+                    const labelId = `${id}Label`;
+                    const currentValue = parseFn($(id).val(), defaultValue);
+                    $(labelId).html(currentValue);
+                    return valueFn(currentValue);
+                }
 
                 function onBrightSunnyEvent() {
-                    let currentSpeedValue = parseFloat($("#sunnySpeed").val())
-                    let currentBrightExtendValue = parseFloat($("#sunnyBrightExtend").val())
-                    let currentBrightBrightnessValue = parseInt($("#sunnyBrightBrightness").val(), 10)
-                    let currentBrightSaturationValue = parseInt($("#sunnyBrightSaturation").val(), 10)
-                    let currentNormalBrightnessValue = parseInt($("#sunnyNormalBrightness").val(), 10)
-                    let currentNormalSaturationValue = parseInt($("#sunnyNormalSaturation").val(), 10)
-
-                    $("#sunnySpeedLabel").html(currentSpeedValue)
-                    $("#sunnyBrightExtendLabel").html(currentBrightExtendValue)
-                    $("#sunnyBrightBrightnessLabel").html(currentBrightBrightnessValue)
-                    $("#sunnyBrightSaturationLabel").html(currentBrightSaturationValue)
-                    $("#sunnyNormalBrightnessLabel").html(currentNormalBrightnessValue)
-                    $("#sunnyNormalSaturationLabel").html(currentNormalSaturationValue)
-
                     msg = {
                         "State": true,
                         "Mode": "BrightSunny",
                         "BrightSunny": {
-                            "Speed": currentSpeedValue,
-                            "BrightExtend": currentBrightExtendValue,
-                            "BrightBrightness": Math.round(currentBrightBrightnessValue / 100 * 255),
-                            "BrightSaturation": Math.round(currentBrightSaturationValue / 100 * 255),
-                            "NormalBrightness": Math.round(currentNormalBrightnessValue / 100 * 255),
-                            "NormalSaturation": Math.round(currentNormalSaturationValue / 100 * 255)
+                            "Speed": parseAndUpdateLabel("#sunnySpeed", parseFloat),
+                            "BrightExtend": parseAndUpdateLabel("#sunnyBrightExtend", parseFloat),
+                            "BrightBrightness": parseAndUpdateLabel("#sunnyBrightBrightness", parseInt, pctToUint),
+                            "BrightSaturation": parseAndUpdateLabel("#sunnyBrightSaturation", parseInt, pctToUint),
+                            "NormalBrightness": parseAndUpdateLabel("#sunnyNormalBrightness", parseInt, pctToUint),
+                            "NormalSaturation": parseAndUpdateLabel("#sunnyNormalSaturation", parseInt, pctToUint),
                         }
                     }
 
-                    if (msg != brightSunnyLastMessage && Date.now() - brightSunnyDebounce > 50) {
-                        brightSunnyDebounce = Date.now()
-                        brightSunnyLastMessage = msg
-                        sendMessage(msg)
+                    if (msg != brightSunnyLastMessage && Date.now() - brightSunnyDebounce > 100) {
+                        brightSunnyDebounce = Date.now();
+                        brightSunnyLastMessage = msg;
+                        sendMessage(msg);
                     }
                 }
             </script>
