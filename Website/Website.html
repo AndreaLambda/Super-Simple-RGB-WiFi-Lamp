@@ -181,73 +181,39 @@
             }
         }
 
+        const PASSTHROUGH = (value) => value;
+        const uintToPct = (value) => Math.round(value / 255 * 100);
+        const uintToHue = (value) => Math.round(value / 255 * 360);
+
+        function updateValueFromJson(id, propName, jsonMessage, valueFn = PASSTHROUGH) {
+            if ((propName in jsonMessage)) {
+                const propValue = jsonMessage[propName];
+                if (typeof propValue === "number") {
+                    const labelId = `${id}Label`;
+                    const value = valueFn(propValue);
+                    $(id).val(value);
+                    $(labelId).html(value);
+                }
+            }            
+        }
+
         function handleRainbowMessage(jsonMessage) {
             if (typeof jsonMessage === "object") {
-                if (("Hue" in jsonMessage)) {
-                    if (typeof jsonMessage.Hue === "number") {
-                        $("#rainbowHue").val(Math.round(jsonMessage.Hue / 255 * 360))
-                        $("#rainbowHueLabel").html(Math.round(jsonMessage.Hue / 255 * 360))
-                    }
-                }
-                if (("Speed" in jsonMessage)) {
-                    if (typeof jsonMessage.Speed === "number") {
-                        $("#rainbowSpeed").val(jsonMessage.Speed)
-                        $("#rainbowSpeedLabel").html(jsonMessage.Speed)
-                    }
-                }
-                if (("Brightness" in jsonMessage)) {
-                    if (typeof jsonMessage.Brightness === "number") {
-                        $("#rainbowBrightness").val(Math.round(jsonMessage.Brightness / 255 * 100))
-                        $("#rainbowBrightnessLabel").html(Math.round(jsonMessage.Brightness / 255 * 100))
-                    }
-                }
-                if (("Saturation" in jsonMessage)) {
-                    if (typeof jsonMessage.Saturation === "number") {
-                        $("#rainbowSaturation").val(Math.round(jsonMessage.Saturation / 255 * 100))
-                        $("#rainbowSaturationLabel").html(Math.round(jsonMessage.Saturation / 255 * 100))
-                    }
-                }
+                updateValueFromJson("#rainbowHue", "Hue", jsonMessage, uintToHue);
+                updateValueFromJson("#rainbowSpeed", "Speed", jsonMessage);
+                updateValueFromJson("#rainbowBrightness", "Brightness", jsonMessage, uintToPct);
+                updateValueFromJson("#rainbowSaturation", "Saturation", jsonMessage, uintToPct);
             }
         }
 
         function handleBrightSunnyMessage(jsonMessage) {
             if (typeof jsonMessage === "object") {
-                if (("Speed" in jsonMessage)) {
-                    if (typeof jsonMessage.Speed === "number") {
-                        $("#sunnySpeed").val(jsonMessage.Speed)
-                        $("#sunnySpeedLabel").html(jsonMessage.Speed)
-                    }
-                }
-                if (("BrightExtend" in jsonMessage)) {
-                    if (typeof jsonMessage.BrightExtend === "number") {
-                        $("#sunnyBrightExtend").val(jsonMessage.BrightExtend)
-                        $("#sunnyBrightExtendLabel").html(jsonMessage.BrightExtend)
-                    }
-                }                
-                if (("BrightBrightness" in jsonMessage)) {
-                    if (typeof jsonMessage.BrightBrightness === "number") {
-                        $("#sunnyBrightBrightness").val(Math.round(jsonMessage.BrightBrightness / 255 * 100))
-                        $("#sunnyBrightBrightnessLabel").html(Math.round(jsonMessage.BrightBrightness / 255 * 100))
-                    }
-                }
-                if (("BrightSaturation" in jsonMessage)) {
-                    if (typeof jsonMessage.BrightSaturation === "number") {
-                        $("#sunnyBrightSaturation").val(Math.round(jsonMessage.BrightSaturation / 255 * 100))
-                        $("#sunnyBrightSaturationLabel").html(Math.round(jsonMessage.BrightSaturation / 255 * 100))
-                    }
-                }
-                if (("NormalBrightness" in jsonMessage)) {
-                    if (typeof jsonMessage.NormalBrightness === "number") {
-                        $("#sunnyNormalBrightness").val(Math.round(jsonMessage.NormalBrightness / 255 * 100))
-                        $("#sunnyNormalBrightnessLabel").html(Math.round(jsonMessage.NormalBrightness / 255 * 100))
-                    }
-                }
-                if (("NormalSaturation" in jsonMessage)) {
-                    if (typeof jsonMessage.NormalSaturation === "number") {
-                        $("#sunnyNormalSaturation").val(Math.round(jsonMessage.NormalSaturation / 255 * 100))
-                        $("#sunnyNormalSaturationLabel").html(Math.round(jsonMessage.NormalSaturation / 255 * 100))
-                    }
-                }                
+                updateValueFromJson("#sunnySpeed", "Speed", jsonMessage);
+                updateValueFromJson("#sunnyBrightExtend", "BrightExtend", jsonMessage);
+                updateValueFromJson("#sunnyBrightBrightness", "BrightBrightness", jsonMessage, uintToPct);
+                updateValueFromJson("#sunnyBrightSaturation", "BrightSaturation", jsonMessage, uintToPct);
+                updateValueFromJson("#sunnyNormalBrightness", "NormalBrightness", jsonMessage, uintToPct);
+                updateValueFromJson("#sunnyNormalSaturation", "NormalSaturation", jsonMessage, uintToPct);
             }
         }
         
@@ -333,17 +299,8 @@
             }
         }
 
-        function handleCircleMessage(jsonMessage) {
-            if (typeof jsonMessage === "object") {
-
-            }
-        }
-
-        function handleNightRiderMessage(jsonMessage) {
-            if (typeof jsonMessage === "object") {
-
-            }
-        }
+        function handleCircleMessage(jsonMessage) {} // no-op
+        function handleNightRiderMessage(jsonMessage) {} // no-op
 
         function handleSparkleMessage(jsonMessage) {
             if (typeof jsonMessage === "object") {
